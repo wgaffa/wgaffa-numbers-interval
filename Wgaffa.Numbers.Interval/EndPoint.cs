@@ -19,6 +19,8 @@ namespace Wgaffa.Numbers
             return new EndPoint<T>(value);
         }
 
+        public static implicit operator T(EndPoint<T> other) => other.Value;
+
         public virtual int CompareTo(T other)
         {
             return Value.CompareTo(other);
