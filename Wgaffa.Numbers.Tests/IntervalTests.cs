@@ -1,10 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wgaffa.Numbers.Tests
 {
@@ -48,6 +42,26 @@ namespace Wgaffa.Numbers.Tests
         public bool Contains_ShouldReturnCorrectResult_GivenInfiniteLowerBound(int upper, int value)
         {
             var interval = new Interval<int>(EndPoint<int>.NegativeInfinity, upper);
+
+            return interval.Contains(value);
+        }
+
+        [TestCase(5, 1, ExpectedResult = true)]
+        [TestCase(1, 1, ExpectedResult = true)]
+        [TestCase(-77, 1, ExpectedResult = false)]
+        public bool Contains_ShouldReturnCorrectResult_GivenInfinityEndPoint_ContextLowerBound(int upper, int value)
+        {
+            var interval = new Interval<int>(EndPoint<int>.Infinity, upper);
+
+            return interval.Contains(value);
+        }
+
+        [TestCase(5, 1, ExpectedResult = false)]
+        [TestCase(1, 1, ExpectedResult = true)]
+        [TestCase(-77, 1, ExpectedResult = true)]
+        public bool Contains_ShouldReturnCorrectResult_GivenInfinityEndPoint_ContextUpperBound(int lower, int value)
+        {
+            var interval = new Interval<int>(lower, EndPoint<int>.Infinity);
 
             return interval.Contains(value);
         }

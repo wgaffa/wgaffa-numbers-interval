@@ -32,12 +32,10 @@ namespace Wgaffa.Numbers
 
         class EndPointInfinity : EndPoint<T>
         {
-            private int _returnValue;
-            EndPoint<T> _lower = new EndPointInfinity(-1);
-            EndPoint<T> _upper = new EndPointInfinity(1);
-
-            internal override EndPoint<T> Lower => _lower;
-            internal override EndPoint<T> Upper => _upper;
+            private readonly int _returnValue;
+            
+            internal override EndPoint<T> Lower => NegativeInfinity;
+            internal override EndPoint<T> Upper => PositiveInfinity;
 
             public EndPointInfinity(int compareReturn = 0)
                 : base(default)

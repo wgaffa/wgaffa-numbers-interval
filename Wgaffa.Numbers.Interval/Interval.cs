@@ -17,7 +17,7 @@ namespace Wgaffa.Numbers
 
         public bool Contains(T value)
         {
-            return LowerBound.CompareTo(value) <= 0 && UpperBound.CompareTo(value) >= 0;
+            return LowerBound.Lower.CompareTo(value) <= 0 && UpperBound.Upper.CompareTo(value) >= 0;
         }
     }
 }
