@@ -6,6 +6,10 @@ namespace Wgaffa.Numbers
     {
         public static EndPoint<T> PositiveInfinity = new EndPointInfinity(1);
         public static EndPoint<T> NegativeInfinity = new EndPointInfinity(-1);
+        public static EndPoint<T> Infinity = new EndPointInfinity();
+
+        internal virtual EndPoint<T> Lower => Value;
+        internal virtual EndPoint<T> Upper => Value;
 
         public T Value { get; }
 
@@ -29,8 +33,13 @@ namespace Wgaffa.Numbers
         class EndPointInfinity : EndPoint<T>
         {
             private int _returnValue;
+            EndPoint<T> _lower = new EndPointInfinity(-1);
+            EndPoint<T> _upper = new EndPointInfinity(1);
 
-            public EndPointInfinity(int compareReturn)
+            internal override EndPoint<T> Lower => _lower;
+            internal override EndPoint<T> Upper => _upper;
+
+            public EndPointInfinity(int compareReturn = 0)
                 : base(default)
             {
                 _returnValue = compareReturn;
