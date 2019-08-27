@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Wgaffa.Numbers</RootNamespace>
+    <Authors>wgaffa</Authors>
+    <Company>Wgaffa</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags />
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>
