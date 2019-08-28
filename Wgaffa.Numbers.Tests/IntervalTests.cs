@@ -65,5 +65,23 @@ namespace Wgaffa.Numbers.Tests
 
             return interval.Contains(value);
         }
+
+        [TestCase(1, 5, 1, ExpectedResult = true)]
+        [TestCase(1, 5, 5, ExpectedResult = true)]
+        public bool Contains_ShouldReturnCorrectResult_GivenInclusiveLowerAndUpperBounds(int lower, int upper, int value)
+        {
+            var interval = new Interval<int>(lower, upper);
+
+            return interval.Contains(value);
+        }
+
+        [TestCase(1, 5, 1, ExpectedResult = false)]
+        [TestCase(1, 5, 5, ExpectedResult = false)]
+        public bool Contains_ShouldReturnCorrectResult_GivenExclusiveLowerAndUpperBounds(int lower, int upper, int value)
+        {
+            var interval = new Interval<int>(new EndPoint<int>(lower, false), new EndPoint<int>(upper, false));
+
+            return interval.Contains(value);
+        }
     }
 }

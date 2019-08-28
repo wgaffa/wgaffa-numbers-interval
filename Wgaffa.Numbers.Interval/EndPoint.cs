@@ -8,14 +8,29 @@ namespace Wgaffa.Numbers
         public static EndPoint<T> NegativeInfinity = new EndPointInfinity(-1);
         public static EndPoint<T> Infinity = new EndPointInfinity();
 
-        internal virtual EndPoint<T> Lower => Value;
-        internal virtual EndPoint<T> Upper => Value;
+        internal virtual EndPoint<T> Lower => this;
+        internal virtual EndPoint<T> Upper => this;
+        internal Func<T, bool> IsInsideUpperBounds;
+        internal Func<T, bool> IsInsideLowerBounds;
 
         public T Value { get; }
+        public bool Inclusive { get; }
 
-        public EndPoint(T value)
+        public EndPoint(T value, bool inclusive = true)
         {
             Value = value;
+            Inclusive = inclusive;
+
+            if (Inclusive)
+            {
+                IsInsideUpperBounds = (T x) => CompareTo(x) >= 0;
+                IsInsideLowerBounds = (T x) => CompareTo(x) <= 0;
+            }
+            else
+            {
+                IsInsideUpperBounds = (T x) => CompareTo(x) > 0;
+                IsInsideLowerBounds = (T x) => CompareTo(x) < 0;
+            }
         }
 
         public static implicit operator EndPoint<T>(T value)
