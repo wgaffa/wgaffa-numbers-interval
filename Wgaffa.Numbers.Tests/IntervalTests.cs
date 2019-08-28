@@ -107,5 +107,42 @@ namespace Wgaffa.Numbers.Tests
         {
             Assert.That(interval.ToString(), Is.EqualTo(expected));
         }
+
+        [TestCase(76, 28, 47)]
+        [TestCase(84, 1, 14)]
+        [TestCase(61, 57, 28)]
+        public void Contains_ShouldReturnFalse_GivenEmptyIntervals(int lower, int upper, int value)
+        {
+            var interval = new Interval<int>(lower, upper);
+
+            Assert.That(interval.Contains(value), Is.False);
+        }
+
+        [TestCase(32, 28, ExpectedResult = true)]
+        [TestCase(75, 27, ExpectedResult = true)]
+        [TestCase(51, 45, ExpectedResult = true)]
+        [TestCase(22, 100, ExpectedResult = false)]
+        [TestCase(12, 29, ExpectedResult = false)]
+        public bool Empty_ShouldReturnCorrectResult(int lower, int upper)
+        {
+            var interval = new Interval<int>(lower, upper);
+
+            return interval.IsEmpty;
+        }
+
+        static readonly List<Interval<int>> InfiniteIntervalSource = new List<Interval<int>> {
+            new Interval<int>(EndPoint<int>.NegativeInfinity, 6),
+            new Interval<int>(1, EndPoint<int>.PositiveInfinity),
+            new Interval<int>(EndPoint<int>.NegativeInfinity, EndPoint<int>.PositiveInfinity),
+            new Interval<int>(EndPoint<int>.Infinity, 6),
+            new Interval<int>(1, EndPoint<int>.Infinity),
+            new Interval<int>(EndPoint<int>.Infinity, EndPoint<int>.Infinity)
+        };
+
+        [TestCaseSource(nameof(InfiniteIntervalSource))]
+        public void Empty_ShouldBeFalse_GivenInfiniteBounds(Interval<int> interval)
+        {
+            Assert.That(interval.IsEmpty, Is.False);
+        }
     }
 }

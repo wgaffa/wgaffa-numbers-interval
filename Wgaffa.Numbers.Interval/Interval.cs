@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Wgaffa.Numbers
 {
@@ -8,6 +6,7 @@ namespace Wgaffa.Numbers
     {
         public EndPoint<T> LowerBound { get; }
         public EndPoint<T> UpperBound { get; }
+        public bool IsEmpty => LowerBound.Lower.CompareTo(UpperBound.Upper) > 0;
 
         public Interval(EndPoint<T> lower, EndPoint<T> upper)
         {
@@ -15,7 +14,7 @@ namespace Wgaffa.Numbers
             UpperBound = upper ?? throw new ArgumentNullException(nameof(upper));
         }
 
-        public bool Contains(T value)
+        public virtual bool Contains(T value)
         {
             return LowerBound.Lower.IsInsideLowerBounds(value) && UpperBound.Upper.IsInsideUpperBounds(value);
         }

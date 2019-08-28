@@ -62,5 +62,14 @@ namespace Wgaffa.Numbers.Tests
 
             Assert.That(endPoint.CompareTo(x), Is.EqualTo(1));
         }
+
+        [Test]
+        public void CompareTo_ShouldReturnPositive_GivenLowerIsPositiveToNegativeInfinity()
+        {
+            var upper = EndPoint<int>.NegativeInfinity;
+            var lower = new EndPoint<int>(6);
+
+            Assert.That(lower.CompareTo(upper), Is.EqualTo(1));
+        }
     }
 }
