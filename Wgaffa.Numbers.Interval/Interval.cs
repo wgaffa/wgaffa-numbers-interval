@@ -19,5 +19,10 @@ namespace Wgaffa.Numbers
         {
             return LowerBound.Lower.IsInsideLowerBounds(value) && UpperBound.Upper.IsInsideUpperBounds(value);
         }
+
+        public override string ToString()
+        {
+            return $"{(LowerBound.Inclusive ? '[' : '(')}{LowerBound}, {UpperBound}{(UpperBound.Inclusive ? ']' : ')')}";
+        }
     }
 }

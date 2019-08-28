@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Wgaffa.Numbers.Tests
 {
@@ -90,6 +91,21 @@ namespace Wgaffa.Numbers.Tests
             var interval = new Interval<int>(EndPoint<int>.PositiveInfinity, 6);
 
             Assert.That(interval.Contains(3), Is.False);
+        }
+
+        static readonly List<object[]> IntervalSource = new List<object[]> {
+            new object[] { new Interval<int>(1, 5), "[1, 5]" },
+            new object[] { new Interval<int>(5, new EndPoint<int>(75, false)), "[5, 75)" },
+            new object[] { new Interval<int>(new EndPoint<int>(2, false), 7), "(2, 7]" },
+            new object[] { new Interval<int>(new EndPoint<int>(5, false), new EndPoint<int>(34, false)), "(5, 34)" },
+            new object[] { new Interval<int>(EndPoint<int>.NegativeInfinity, EndPoint<int>.PositiveInfinity), "[-Inf, +Inf]" },
+            new object[] { new Interval<int>(EndPoint<int>.Infinity, EndPoint<int>.Infinity), "[Inf, Inf]" }
+        };
+
+        [TestCaseSource(nameof(IntervalSource))]
+        public void ToString_ShouldReturnCorrectString(Interval<int> interval, string expected)
+        {
+            Assert.That(interval.ToString(), Is.EqualTo(expected));
         }
     }
 }

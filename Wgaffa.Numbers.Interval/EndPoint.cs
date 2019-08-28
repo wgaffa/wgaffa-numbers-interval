@@ -45,6 +45,11 @@ namespace Wgaffa.Numbers
             return Value.CompareTo(other);
         }
 
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
         class EndPointInfinity : EndPoint<T>
         {
             internal override EndPoint<T> Lower => NegativeInfinity;
@@ -58,6 +63,11 @@ namespace Wgaffa.Numbers
             public override int CompareTo(T other)
             {
                 return 0;
+            }
+
+            public override string ToString()
+            {
+                return "Inf";
             }
         }
 
@@ -74,6 +84,11 @@ namespace Wgaffa.Numbers
             public override int CompareTo(T other)
             {
                 return _returnValue;
+            }
+
+            public override string ToString()
+            {
+                return _returnValue < 0 ? "-Inf" : "+Inf";
             }
         }
     }
