@@ -83,5 +83,13 @@ namespace Wgaffa.Numbers.Tests
 
             return interval.Contains(value);
         }
+
+        [Test]
+        public void Contains_ShouldReturnFalse_GivenPositiveInfinityLowerBound()
+        {
+            var interval = new Interval<int>(EndPoint<int>.PositiveInfinity, 6);
+
+            Assert.That(interval.Contains(3), Is.False);
+        }
     }
 }
