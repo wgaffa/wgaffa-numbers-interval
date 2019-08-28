@@ -5,7 +5,7 @@ namespace Wgaffa.Numbers
     public class EndPoint<T> : IComparable<T> where T : IComparable<T>
     {
         public static EndPoint<T> PositiveInfinity = new EndPointPositiveInfinity();
-        public static EndPoint<T> NegativeInfinity = new EndPointNegativeInfinity();
+        public static EndPoint<T> NegativeInfinity = new EndPointPositiveInfinity(-1);
         public static EndPoint<T> Infinity = new EndPointInfinity();
 
         internal virtual EndPoint<T> Lower => this;
@@ -63,27 +63,17 @@ namespace Wgaffa.Numbers
 
         class EndPointPositiveInfinity : EndPoint<T>
         {
-            public EndPointPositiveInfinity()
+            private readonly int _returnValue;
+
+            public EndPointPositiveInfinity(int returnValue = 1)
                 : base(default)
             {
+                _returnValue = returnValue;
             }
 
             public override int CompareTo(T other)
             {
-                return 1;
-            }
-        }
-
-        class EndPointNegativeInfinity : EndPoint<T>
-        {
-            public EndPointNegativeInfinity()
-                : base(default)
-            {
-            }
-
-            public override int CompareTo(T other)
-            {
-                return -1;
+                return _returnValue;
             }
         }
     }
