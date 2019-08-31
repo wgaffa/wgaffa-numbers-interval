@@ -73,7 +73,18 @@ namespace Wgaffa.Numbers
 
             public override int CompareTo(T other)
             {
-                return 0;
+                return 1;
+            }
+
+            public override int CompareTo(EndPoint<T> other)
+            {
+                if (other is EndPointPositiveInfinity inf)
+                    return inf.Sign < 0 ? 1 : 0;
+
+                if (other is EndPointInfinity)
+                    return 0;
+
+                return 1;
             }
 
             public override string ToString()

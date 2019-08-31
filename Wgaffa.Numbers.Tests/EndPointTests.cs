@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Wgaffa.Numbers.Tests
 {
@@ -70,6 +71,33 @@ namespace Wgaffa.Numbers.Tests
             var lower = new EndPoint<int>(6);
 
             Assert.That(lower.CompareTo(upper), Is.EqualTo(1));
+        }
+
+
+        // Read more https://github.com/nunit/docs/wiki/TestCaseSource-Attribute
+        static readonly List<object[]> EndPointComparisonSource = new List<object[]> {
+            new object[] { new EndPoint<int>(6), new EndPoint<int>(52), -1 },
+            new object[] { new EndPoint<int>(32), new EndPoint<int>(13), 1 },
+            new object[] { new EndPoint<int>(65), new EndPoint<int>(65), 0 },
+            new object[] { new EndPoint<int>(65), EndPoint<int>.PositiveInfinity, -1 },
+            new object[] { new EndPoint<int>(65), EndPoint<int>.NegativeInfinity, 1 },
+            new object[] { new EndPoint<int>(65), EndPoint<int>.Infinity, -1 },
+            new object[] { EndPoint<int>.PositiveInfinity, new EndPoint<int>(34), 1 },
+            new object[] { EndPoint<int>.NegativeInfinity, new EndPoint<int>(34), -1 },
+            new object[] { EndPoint<int>.Infinity, new EndPoint<int>(34), 1 },
+            new object[] { EndPoint<int>.PositiveInfinity, EndPoint<int>.NegativeInfinity, 1 },
+            new object[] { EndPoint<int>.NegativeInfinity, EndPoint<int>.PositiveInfinity, -1 },
+            new object[] { EndPoint<int>.NegativeInfinity, EndPoint<int>.NegativeInfinity, 0 },
+            new object[] { EndPoint<int>.PositiveInfinity, EndPoint<int>.PositiveInfinity, 0 },
+            new object[] { EndPoint<int>.Infinity, EndPoint<int>.Infinity, 0 }
+        };
+
+        [TestCaseSource(nameof(EndPointComparisonSource))]
+        public void CompareTo_ShouldReturnCorrectOrder(EndPoint<int> first, EndPoint<int> second, int expected)
+        {
+            var result = first.CompareTo(second);
+
+            Assert.That(result, Is.EqualTo(expected));
         }
     }
 }
