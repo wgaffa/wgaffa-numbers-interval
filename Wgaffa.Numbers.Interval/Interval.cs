@@ -19,6 +19,14 @@ namespace Wgaffa.Numbers
             return LowerBound.Lower.IsInsideLowerBounds(value) && UpperBound.Upper.IsInsideUpperBounds(value);
         }
 
+        public Interval<T> Intersect(Interval<T> other)
+        {
+            T max(T x, T y) => x.CompareTo(y) > 0 ? x : y;
+            T min(T x, T y) => x.CompareTo(y) < 0 ? x : y;
+
+            return new Interval<T>(max(LowerBound.Value, other.LowerBound.Value), min(UpperBound.Value, other.UpperBound.Value));
+        }
+
         public override string ToString()
         {
             return $"{(LowerBound.Inclusive ? '[' : '(')}{LowerBound}, {UpperBound}{(UpperBound.Inclusive ? ']' : ')')}";
