@@ -74,7 +74,6 @@ namespace Wgaffa.Numbers.Tests
         }
 
 
-        // Read more https://github.com/nunit/docs/wiki/TestCaseSource-Attribute
         static readonly List<object[]> EndPointComparisonSource = new List<object[]> {
             new object[] { new EndPoint<int>(6), new EndPoint<int>(52), -1 },
             new object[] { new EndPoint<int>(32), new EndPoint<int>(13), 1 },
@@ -98,6 +97,14 @@ namespace Wgaffa.Numbers.Tests
             var result = first.CompareTo(second);
 
             Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [TestCaseSource(nameof(EndPointComparisonSource))]
+        public void Equals_ShouldReturnCorrectResult(EndPoint<int> first, EndPoint<int> second, int equality)
+        {
+            var expected = equality == 0;
+
+            Assert.That(first.Equals(second), Is.EqualTo(expected));
         }
     }
 }
