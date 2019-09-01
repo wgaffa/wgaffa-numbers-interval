@@ -1,22 +1,53 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Wgaffa.Numbers
 {
     public class Interval<T> : IEquatable<Interval<T>> where T : IComparable<T>
     {
-        public EndPoint<T> LowerBound { get; }
-        public EndPoint<T> UpperBound { get; }
-        public bool IsEmpty => LowerBound.Lower.CompareTo(UpperBound.Upper) > 0;
+        private readonly List<EndPointPair<T>> _endPoints;
+
+        public IReadOnlyCollection<EndPointPair<T>> Bounds => _endPoints.AsReadOnly();
+
+        public bool IsEmpty { get; } = true;
 
         public Interval(EndPoint<T> lower, EndPoint<T> upper)
+            : this(new EndPointPair<T>[] { new EndPointPair<T>(lower, upper) })
         {
-            LowerBound = lower ?? throw new ArgumentNullException(nameof(lower));
-            UpperBound = upper ?? throw new ArgumentNullException(nameof(upper));
+        }
+
+        public Interval(IEnumerable<EndPointPair<T>> endPoints)
+        {
+            if (endPoints == null)
+                throw new ArgumentNullException(nameof(endPoints));
+
+            _endPoints = endPoints.ToList();
+
+            foreach (var pair in _endPoints)
+            {
+                if (pair.Lower.CompareTo(pair.Upper) > 0)
+                    continue;
+
+                IsEmpty = false;
+                break;
+            }
         }
 
         public virtual bool Contains(T value)
         {
-            return LowerBound.Lower.IsInsideLowerBounds(value) && UpperBound.Upper.IsInsideUpperBounds(value);
+            var foundValue = false;
+            foreach (var pair in _endPoints)
+            {
+                if (pair.Lower.IsInsideLowerBounds(value) && pair.Upper.IsInsideUpperBounds(value))
+                {
+                    foundValue = true;
+                    break;
+                }
+            }
+
+            return foundValue;
         }
 
         public Interval<T> Intersect(Interval<T> other)
@@ -24,12 +55,21 @@ namespace Wgaffa.Numbers
             EndPoint<T> max(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) > 0 ? x : y;
             EndPoint<T> min(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) < 0 ? x : y;
 
-            return new Interval<T>(max(LowerBound.Lower, other.LowerBound.Lower), min(UpperBound.Upper, other.UpperBound.Upper));
+            var pair = Bounds.Single();
+            var otherPair = other.Bounds.Single();
+
+            return new Interval<T>(max(pair.Lower, otherPair.Lower), min(pair.Upper, otherPair.Upper));
         }
 
         public override string ToString()
         {
-            return $"{(LowerBound.Inclusive ? '[' : '(')}{LowerBound}, {UpperBound}{(UpperBound.Inclusive ? ']' : ')')}";
+            StringBuilder intervalString = new StringBuilder();
+            foreach (var pair in _endPoints)
+            {
+                intervalString.Append($"{(pair.Lower.Inclusive ? '[' : '(')}{pair.Lower}, {pair.Upper}{(pair.Upper.Inclusive ? ']' : ')')}");
+            }
+
+            return intervalString.ToString();
         }
 
         public bool Equals(Interval<T> other)
@@ -37,8 +77,7 @@ namespace Wgaffa.Numbers
             if (other == null)
                 return false;
 
-            return LowerBound.Equals(other.LowerBound) &&
-                UpperBound.Equals(other.UpperBound);
+            return _endPoints.SequenceEqual(other._endPoints);
         }
 
         public override bool Equals(object obj)
@@ -60,8 +99,11 @@ namespace Wgaffa.Numbers
             unchecked
             {
                 int hashCode = 17;
-                hashCode = hashCode * 223 + LowerBound.GetHashCode();
-                hashCode = hashCode * 223 + UpperBound.GetHashCode();
+                foreach (var pair in _endPoints)
+                {
+                    hashCode = hashCode * 223 + pair.Lower.GetHashCode();
+                    hashCode = hashCode * 223 + pair.Upper.GetHashCode();
+                }
 
                 return hashCode;
             }

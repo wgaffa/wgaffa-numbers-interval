@@ -101,7 +101,7 @@ namespace Wgaffa.Numbers
             internal override EndPoint<T> Upper => PositiveInfinity;
 
             public EndPointInfinity()
-                : base(default)
+                : base(default, false)
             {
             }
 
@@ -133,7 +133,7 @@ namespace Wgaffa.Numbers
             internal int Sign => _returnValue;
             
             public EndPointPositiveInfinity(int returnValue = 1)
-                : base(default)
+                : base(default, false)
             {
                 _returnValue = returnValue;
             }

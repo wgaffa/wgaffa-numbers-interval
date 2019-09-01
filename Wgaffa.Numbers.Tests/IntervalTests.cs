@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Wgaffa.Numbers.Tests
 {
@@ -11,8 +12,10 @@ namespace Wgaffa.Numbers.Tests
         {
             var interval = new Interval<int>(3, 24);
 
-            Assert.That(interval.LowerBound.Value, Is.EqualTo(3));
-            Assert.That(interval.UpperBound.Value, Is.EqualTo(24));
+            var result = interval.Bounds.Single();
+
+            Assert.That(result.Lower.Value, Is.EqualTo(3));
+            Assert.That(result.Upper.Value, Is.EqualTo(24));
         }
 
         [TestCase(1, 10, 5, ExpectedResult = true)]
@@ -98,8 +101,8 @@ namespace Wgaffa.Numbers.Tests
             new object[] { new Interval<int>(5, new EndPoint<int>(75, false)), "[5, 75)" },
             new object[] { new Interval<int>(new EndPoint<int>(2, false), 7), "(2, 7]" },
             new object[] { new Interval<int>(new EndPoint<int>(5, false), new EndPoint<int>(34, false)), "(5, 34)" },
-            new object[] { new Interval<int>(EndPoint<int>.NegativeInfinity, EndPoint<int>.PositiveInfinity), "[-Inf, +Inf]" },
-            new object[] { new Interval<int>(EndPoint<int>.Infinity, EndPoint<int>.Infinity), "[Inf, Inf]" }
+            new object[] { new Interval<int>(EndPoint<int>.NegativeInfinity, EndPoint<int>.PositiveInfinity), "(-Inf, +Inf)" },
+            new object[] { new Interval<int>(EndPoint<int>.Infinity, EndPoint<int>.Infinity), "(-Inf, +Inf)" }
         };
 
         [TestCaseSource(nameof(IntervalSource))]
