@@ -31,5 +31,19 @@ namespace Wgaffa.Numbers.Tests
 
             Assert.That(interval.Contains(value), Is.EqualTo(expected));
         }
+
+        static readonly List<object[]> UnionIntervalStringsSource = new List<object[]> {
+            new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(2, 5) }, "[2, 5]" },
+            new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(7, 8) }, "[2, 5][7, 8]" },
+            new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(4, 8) }, "[2, 8]" },
+        };
+
+        [TestCaseSource(nameof(UnionIntervalStringsSource))]
+        public void ToString_ShouldReturnCorrectRepresentation(List<EndPointPair<int>> endPointPairs, string expected)
+        {
+            var interval = new Interval<int>(endPointPairs);
+
+            Assert.That(interval.ToString(), Is.EqualTo(expected));
+        }
     }
 }

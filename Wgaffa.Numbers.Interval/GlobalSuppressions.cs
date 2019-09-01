@@ -5,3 +5,4 @@
 // a specific target and scoped to a namespace, type, member, etc.
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0041:Use 'is null' check", Justification = "Code Style Guidelines", Scope = "member", Target = "~M:Wgaffa.Numbers.Interval`1.Equals(System.Object)~System.Boolean")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0041:Use 'is null' check", Justification = "<Pending>", Scope = "member", Target = "~M:Wgaffa.Numbers.EndPointPair`1.Equals(System.Object)~System.Boolean")]
