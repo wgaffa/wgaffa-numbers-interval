@@ -63,13 +63,7 @@ namespace Wgaffa.Numbers
 
         public override string ToString()
         {
-            StringBuilder intervalString = new StringBuilder();
-            foreach (var pair in _endPoints)
-            {
-                intervalString.Append($"{(pair.Lower.Inclusive ? '[' : '(')}{pair.Lower}, {pair.Upper}{(pair.Upper.Inclusive ? ']' : ')')}");
-            }
-
-            return intervalString.ToString();
+            return string.Join(", ", _endPoints);
         }
 
         public bool Equals(Interval<T> other)
