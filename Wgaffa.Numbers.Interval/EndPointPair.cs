@@ -18,16 +18,13 @@ namespace Wgaffa.Numbers
 
         public bool Overlaps(EndPointPair<T> other)
         {
-            EndPoint<T> max(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) > 0 ? x : y;
-            EndPoint<T> min(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) < 0 ? x : y;
+            var continuousLeft = (Lower.Inclusive || other.Upper.Inclusive) && Lower.CompareTo(other.Upper) == 0;
+            var continuousRight = (other.Lower.Inclusive || Upper.Inclusive) && Upper.CompareTo(other.Lower) == 0;
 
-            var lowerBound = max(Lower, other.Lower);
-            var upperBound = min(Upper, other.Upper);
-
-            if (lowerBound.CompareTo(upperBound) <= 0)
+            if (continuousRight || continuousLeft)
                 return true;
 
-            return false;
+            return Lower.IsInsideLowerBounds(other.Upper) && other.Lower.IsInsideLowerBounds(Upper);
         }
 
         public bool Equals(EndPointPair<T> other)

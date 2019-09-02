@@ -10,8 +10,8 @@ namespace Wgaffa.Numbers
 
         internal virtual EndPoint<T> Lower => this;
         internal virtual EndPoint<T> Upper => this;
-        internal Func<T, bool> IsInsideUpperBounds;
-        internal Func<T, bool> IsInsideLowerBounds;
+        internal Func<EndPoint<T>, bool> IsInsideUpperBounds;
+        internal Func<EndPoint<T>, bool> IsInsideLowerBounds;
 
         public T Value { get; }
         public bool Inclusive { get; }
@@ -23,13 +23,13 @@ namespace Wgaffa.Numbers
 
             if (Inclusive)
             {
-                IsInsideUpperBounds = (T x) => CompareTo(x) >= 0;
-                IsInsideLowerBounds = (T x) => CompareTo(x) <= 0;
+                IsInsideUpperBounds = (EndPoint<T> x) => CompareTo(x) >= 0;
+                IsInsideLowerBounds = (EndPoint<T> x) => CompareTo(x) <= 0;
             }
             else
             {
-                IsInsideUpperBounds = (T x) => CompareTo(x) > 0;
-                IsInsideLowerBounds = (T x) => CompareTo(x) < 0;
+                IsInsideUpperBounds = (EndPoint<T> x) => CompareTo(x) > 0;
+                IsInsideLowerBounds = (EndPoint<T> x) => CompareTo(x) < 0;
             }
         }
 
