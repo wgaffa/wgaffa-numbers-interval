@@ -27,6 +27,20 @@ namespace Wgaffa.Numbers
             return Lower.IsInsideLowerBounds(other.Upper) && other.Lower.IsInsideLowerBounds(Upper);
         }
 
+        public EndPointPair<T> Merge(EndPointPair<T> other)
+        {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (!Overlaps(other))
+                throw new InvalidOperationException("Cannot perform a merge on non overlapping pairs");
+
+            EndPoint<T> max(EndPoint<T> left, EndPoint<T> right) => left.CompareTo(right) > 0 ? left : right;
+            EndPoint<T> min(EndPoint<T> left, EndPoint<T> right) => left.CompareTo(right) < 0 ? left : right;
+
+            return new EndPointPair<T>(min(Lower, other.Lower), max(Upper, other.Upper));
+        }
+
         public bool Equals(EndPointPair<T> other)
         {
             if (other == null)
