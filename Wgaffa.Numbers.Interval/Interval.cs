@@ -23,7 +23,33 @@ namespace Wgaffa.Numbers
             if (endPoints == null)
                 throw new ArgumentNullException(nameof(endPoints));
 
-            _endPoints = endPoints.ToList();
+            _endPoints = new List<EndPointPair<T>>();
+
+            var pointsBeingMerged = new List<EndPointPair<T>>(endPoints);
+            while (pointsBeingMerged.Count > 0)
+            {
+                var currentPoint = pointsBeingMerged[0];
+                pointsBeingMerged.RemoveAt(0);
+
+                var mergeComplete = false;
+                EndPointPair<T> merged = currentPoint;
+                while (!mergeComplete)
+                {
+                    var overlappingPoints = pointsBeingMerged.Where(x => x.Overlaps(merged));
+                    mergeComplete = overlappingPoints.Count() == 0;
+
+                    if (!mergeComplete)
+                        merged = overlappingPoints.Aggregate(merged, (a, b) => a.Merge(b));
+                    else
+                        _endPoints.Add(merged);
+
+                    var markedForDeletion = overlappingPoints.ToList();
+                    foreach (var item in markedForDeletion)
+                    {
+                        pointsBeingMerged.Remove(item);
+                    }
+                }
+            }
 
             foreach (var pair in _endPoints)
             {

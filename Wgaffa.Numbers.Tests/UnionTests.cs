@@ -36,6 +36,21 @@ namespace Wgaffa.Numbers.Tests
             new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(2, 5) }, "[2, 5]" },
             new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(7, 8) }, "[2, 5], [7, 8]" },
             new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(4, 8) }, "[2, 8]" },
+            new object[] {
+                new List<EndPointPair<int>>() {
+                    new EndPointPair<int>(-4, 13),
+                    new EndPointPair<int>(-27, 4),
+                    new EndPointPair<int>(-1, 26),
+                    new EndPointPair<int>(10, 12),
+                    new EndPointPair<int>(1, 22),
+                    new EndPointPair<int>(-14, 14),
+                    new EndPointPair<int>(-12, -5),
+                    new EndPointPair<int>(-26, -18),
+                },
+                "[-27, 26]"
+            },
+            new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(EndPoint<int>.Infinity, 5), new EndPointPair<int>(4, 8) }, "(-Inf, 8]" },
+            new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(4, new EndPoint<int>(8, false)) }, "[2, 8)" },
         };
 
         [TestCaseSource(nameof(UnionIntervalStringsSource))]
