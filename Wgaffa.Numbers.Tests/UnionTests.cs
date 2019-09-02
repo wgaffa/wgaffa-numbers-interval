@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Wgaffa.Numbers.Tests
 {
@@ -59,6 +60,17 @@ namespace Wgaffa.Numbers.Tests
             var interval = new Interval<int>(endPointPairs);
 
             Assert.That(interval.ToString(), Is.EqualTo(expected));
+        }
+
+        [TestCaseSource(nameof(UnionIntervalStringsSource))]
+        public void Union_ShouldCreateCorrectResult(List<EndPointPair<int>> endPointPairs, string expected)
+        {
+            var intervals = endPointPairs.Select(x => new Interval<int>(x.Lower, x.Upper)).ToList();
+
+            var first = intervals.First();
+            var result = first.Union(intervals.Skip(1));
+
+            Assert.That(result.ToString(), Is.EqualTo(expected));
         }
     }
 }

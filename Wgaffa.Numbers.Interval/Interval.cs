@@ -87,6 +87,14 @@ namespace Wgaffa.Numbers
             return new Interval<T>(max(pair.Lower, otherPair.Lower), min(pair.Upper, otherPair.Upper));
         }
 
+        public Interval<T> Union(IEnumerable<Interval<T>> other)
+        {
+            var endPointPairs = new List<EndPointPair<T>>(Bounds);
+            endPointPairs.AddRange(other.SelectMany(x => x.Bounds).ToList());
+
+            return new Interval<T>(endPointPairs);
+        }
+
         public override string ToString()
         {
             return string.Join(", ", _endPoints);
