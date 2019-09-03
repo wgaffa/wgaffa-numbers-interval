@@ -25,7 +25,7 @@ namespace Wgaffa.Numbers
 
             _endPoints = new List<EndPointPair<T>>();
 
-            var pointsBeingMerged = new List<EndPointPair<T>>(endPoints);
+            var pointsBeingMerged = new List<EndPointPair<T>>(endPoints.Where(x => x.Lower.CompareTo(x.Upper) <= 0));
             while (pointsBeingMerged.Count > 0)
             {
                 var currentPoint = pointsBeingMerged[0];

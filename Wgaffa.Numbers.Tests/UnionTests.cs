@@ -72,5 +72,68 @@ namespace Wgaffa.Numbers.Tests
 
             Assert.That(result.ToString(), Is.EqualTo(expected));
         }
+
+        static readonly List<object[]> IntervalSetsSource = new List<object[]> {
+            new object[]
+            {
+                new List<Interval<int>>()
+                {
+                    new Interval<int>(-879, 943), new Interval<int>(-293, -692),
+                    new Interval<int>(-809, -159)
+                }, -965, new object[] { false, 1 }
+            },
+            new object[]
+            {
+                new List<Interval<int>>()
+                {
+                    new Interval<int>(366, 212), new Interval<int>(-734, -448),
+                    new Interval<int>(-587, 433)
+                }, 920, new object[] { false, 1 }
+            },
+            new object[]
+            {
+                new List<Interval<int>>()
+                {
+                    new Interval<int>(653, -507), new Interval<int>(-718, 134),
+                    new Interval<int>(-995, -169)
+                }, -543, new object[] { true, 1 }
+            },
+            new object[]
+            {
+                new List<Interval<int>>()
+                {
+                    new Interval<int>(-170, 323), new Interval<int>(720, -390),
+                    new Interval<int>(-429, -843)
+                }, -539, new object[] { false, 1 }
+            },
+            new object[]
+            {
+                new List<Interval<int>>()
+                {
+                    new Interval<int>(-897, -977), new Interval<int>(784, -17),
+                    new Interval<int>(466, -860)
+                }, 67, new object[] { false, 0 }
+            }
+        };
+
+        [TestCaseSource(nameof(IntervalSetsSource))]
+        public void Union_ShouldReturnCorrectInterval(List<Interval<int>> intervals, int value, object[] expectedList)
+        {
+            var interval = intervals.First().Union(intervals.Skip(1));
+
+            var expected = (bool)expectedList[0];
+
+            Assert.That(interval.Contains(value), Is.EqualTo(expected));
+        }
+
+        [TestCaseSource(nameof(IntervalSetsSource))]
+        public void Bounds_ShouldReturnCorrectCount(List<Interval<int>> intervals, int value, object[] expectedList)
+        {
+            var interval = intervals.First().Union(intervals.Skip(1));
+
+            var expected = (int)expectedList[1];
+
+            Assert.That(interval.Bounds.Count, Is.EqualTo(expected));
+        }
     }
 }
