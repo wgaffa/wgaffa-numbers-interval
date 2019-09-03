@@ -11,7 +11,7 @@ namespace Wgaffa.Numbers
 
         public IReadOnlyCollection<EndPointPair<T>> Bounds => _endPoints.AsReadOnly();
 
-        public bool IsEmpty { get; } = true;
+        public bool IsEmpty => Bounds.Count <= 0;
 
         public Interval(EndPoint<T> lower, EndPoint<T> upper)
             : this(new EndPointPair<T>[] { new EndPointPair<T>(lower, upper) })
@@ -25,7 +25,8 @@ namespace Wgaffa.Numbers
 
             _endPoints = new List<EndPointPair<T>>();
 
-            var pointsBeingMerged = new List<EndPointPair<T>>(endPoints.Where(x => x.Lower.CompareTo(x.Upper) <= 0));
+            var nonEmptyPoints = endPoints.Where(x => x.Lower.IsInsideLowerBounds(x.Upper) && x.Upper.IsInsideUpperBounds(x.Lower));
+            var pointsBeingMerged = new List<EndPointPair<T>>(nonEmptyPoints);
             while (pointsBeingMerged.Count > 0)
             {
                 var currentPoint = pointsBeingMerged[0];
@@ -49,15 +50,6 @@ namespace Wgaffa.Numbers
                         pointsBeingMerged.Remove(item);
                     }
                 }
-            }
-
-            foreach (var pair in _endPoints)
-            {
-                if (pair.Lower.CompareTo(pair.Upper) > 0)
-                    continue;
-
-                IsEmpty = false;
-                break;
             }
         }
 

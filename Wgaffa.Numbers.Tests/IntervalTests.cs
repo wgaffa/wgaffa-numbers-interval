@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -131,6 +132,19 @@ namespace Wgaffa.Numbers.Tests
             var interval = new Interval<int>(lower, upper);
 
             return interval.IsEmpty;
+        }
+        
+        static readonly List<Interval<int>> EmptySetSource = new List<Interval<int>> {
+            new Interval<int>(5, new EndPoint<int>(5, false)),
+            new Interval<int>(new EndPoint<int>(5, false), 5),
+            new Interval<int>(new EndPoint<int>(5, false), new EndPoint<int>(5, false))
+        };
+
+        [TestCaseSource(nameof(EmptySetSource))]
+        public void IsEmpty_ShouldReturnTrue_GivenSpecialCases(Interval<int> interval)
+        {
+            Assert.That(interval.IsEmpty);
+            Assert.That(interval.Bounds.Count, Is.EqualTo(0));
         }
 
         static readonly List<Interval<int>> InfiniteIntervalSource = new List<Interval<int>> {
