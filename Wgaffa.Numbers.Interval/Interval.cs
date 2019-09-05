@@ -1,71 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Wgaffa.Numbers
 {
-    public class Interval<T> : IEquatable<Interval<T>> where T : IComparable<T>
+    public class Interval<T> : IInterval<T>, IEquatable<Interval<T>> where T : IComparable<T>
     {
-        private readonly List<EndPointPair<T>> _endPoints;
-
-        public IReadOnlyCollection<EndPointPair<T>> Bounds => _endPoints.AsReadOnly();
-
-        public bool IsEmpty => Bounds.Count <= 0;
-
-        public Interval(EndPoint<T> lower, EndPoint<T> upper)
-            : this(new EndPointPair<T>[] { new EndPointPair<T>(lower, upper) })
+        public bool IsEmpty
         {
+            get
+            {
+                if (Lower.CompareTo(Upper) == 0)
+                    return !(Lower.Inclusive && Upper.Inclusive);
+
+                return Lower.IsInsideUpperBounds(Upper) || Upper.IsInsideLowerBounds(Lower);
+            }
         }
 
-        public Interval(IEnumerable<EndPointPair<T>> endPoints)
+        public EndPoint<T> Lower { get; }
+        public EndPoint<T> Upper { get; }
+
+        public Interval(EndPoint<T> lower, EndPoint<T> upper)
         {
-            if (endPoints == null)
-                throw new ArgumentNullException(nameof(endPoints));
+            Lower = lower.Lower ?? throw new ArgumentNullException(nameof(lower));
+            Upper = upper.Upper ?? throw new ArgumentNullException(nameof(upper));
+        }
 
-            _endPoints = new List<EndPointPair<T>>();
-
-            var nonEmptyPoints = endPoints.Where(x => x.Lower.IsInsideLowerBounds(x.Upper) && x.Upper.IsInsideUpperBounds(x.Lower));
-            var pointsBeingMerged = new List<EndPointPair<T>>(nonEmptyPoints);
-            while (pointsBeingMerged.Count > 0)
-            {
-                var currentPoint = pointsBeingMerged[0];
-                pointsBeingMerged.RemoveAt(0);
-
-                var mergeComplete = false;
-                EndPointPair<T> merged = currentPoint;
-                while (!mergeComplete)
-                {
-                    var overlappingPoints = pointsBeingMerged.Where(x => x.Overlaps(merged));
-                    mergeComplete = overlappingPoints.Count() == 0;
-
-                    if (!mergeComplete)
-                        merged = overlappingPoints.Aggregate(merged, (a, b) => a.Merge(b));
-                    else
-                        _endPoints.Add(merged);
-
-                    var markedForDeletion = overlappingPoints.ToList();
-                    foreach (var item in markedForDeletion)
-                    {
-                        pointsBeingMerged.Remove(item);
-                    }
-                }
-            }
+        public Interval(EndPointPair<T> endPoint)
+        {
+            Lower = endPoint.Lower;
+            Upper = endPoint.Upper;
         }
 
         public virtual bool Contains(T value)
         {
-            var foundValue = false;
-            foreach (var pair in _endPoints)
-            {
-                if (pair.Lower.IsInsideLowerBounds(value) && pair.Upper.IsInsideUpperBounds(value))
-                {
-                    foundValue = true;
-                    break;
-                }
-            }
-
-            return foundValue;
+            return Lower.IsInsideLowerBounds(value) && Upper.IsInsideUpperBounds(value);
         }
 
         public Interval<T> Intersect(Interval<T> other)
@@ -73,23 +42,17 @@ namespace Wgaffa.Numbers
             EndPoint<T> max(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) > 0 ? x : y;
             EndPoint<T> min(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) < 0 ? x : y;
 
-            var pair = Bounds.Single();
-            var otherPair = other.Bounds.Single();
-
-            return new Interval<T>(max(pair.Lower, otherPair.Lower), min(pair.Upper, otherPair.Upper));
+            return new Interval<T>(max(Lower, other.Lower), min(Upper, other.Upper));
         }
 
-        public Interval<T> Union(IEnumerable<Interval<T>> other)
+        public IInterval<T> Union(IEnumerable<Interval<T>> other)
         {
-            var endPointPairs = new List<EndPointPair<T>>(Bounds);
-            endPointPairs.AddRange(other.SelectMany(x => x.Bounds).ToList());
-
-            return new Interval<T>(endPointPairs);
+            return new UnionInterval<T>(other.Prepend(this));
         }
 
         public override string ToString()
         {
-            return string.Join(", ", _endPoints);
+            return $"{(Lower.Inclusive ? '[' : '(')}{Lower}, {Upper}{(Upper.Inclusive ? ']' : ')')}";
         }
 
         public bool Equals(Interval<T> other)
@@ -97,7 +60,7 @@ namespace Wgaffa.Numbers
             if (other == null)
                 return false;
 
-            return _endPoints.SequenceEqual(other._endPoints);
+            return Lower.Equals(other.Lower) && Upper.Equals(other.Upper);
         }
 
         public override bool Equals(object obj)
@@ -119,11 +82,8 @@ namespace Wgaffa.Numbers
             unchecked
             {
                 int hashCode = 17;
-                foreach (var pair in _endPoints)
-                {
-                    hashCode = hashCode * 223 + pair.Lower.GetHashCode();
-                    hashCode = hashCode * 223 + pair.Upper.GetHashCode();
-                }
+                hashCode = hashCode * 223 + Lower.GetHashCode();
+                hashCode = hashCode * 223 + Upper.GetHashCode();
 
                 return hashCode;
             }

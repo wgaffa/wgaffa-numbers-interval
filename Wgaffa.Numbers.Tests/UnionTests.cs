@@ -23,50 +23,48 @@ namespace Wgaffa.Numbers.Tests
             int value,
             bool expected)
         {
-            var pairs = new EndPointPair<int>[] {
-                new EndPointPair<int>(lowerFirst, upperFirst),
-                new EndPointPair<int>(lowerSecond, upperSecond)
+            var pairs = new Interval<int>[] {
+                new Interval<int>(lowerFirst, upperFirst),
+                new Interval<int>(lowerSecond, upperSecond)
             };
 
-            var interval = new Interval<int>(pairs);
+            var interval = new UnionInterval<int>(pairs);
 
             Assert.That(interval.Contains(value), Is.EqualTo(expected));
         }
 
         static readonly List<object[]> UnionIntervalStringsSource = new List<object[]> {
-            new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(2, 5) }, "[2, 5]" },
-            new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(7, 8) }, "[2, 5], [7, 8]" },
-            new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(4, 8) }, "[2, 8]" },
+            new object[] { new List<Interval<int>>() { new Interval<int>(2, 5), new Interval<int>(2, 5) }, "[2, 5]" },
+            new object[] { new List<Interval<int>>() { new Interval<int>(2, 5), new Interval<int>(7, 8) }, "[2, 5], [7, 8]" },
+            new object[] { new List<Interval<int>>() { new Interval<int>(2, 5), new Interval<int>(4, 8) }, "[2, 8]" },
             new object[] {
-                new List<EndPointPair<int>>() {
-                    new EndPointPair<int>(-4, 13),
-                    new EndPointPair<int>(-27, 4),
-                    new EndPointPair<int>(-1, 26),
-                    new EndPointPair<int>(10, 12),
-                    new EndPointPair<int>(1, 22),
-                    new EndPointPair<int>(-14, 14),
-                    new EndPointPair<int>(-12, -5),
-                    new EndPointPair<int>(-26, -18),
+                new List<Interval<int>>() {
+                    new Interval<int>(-4, 13),
+                    new Interval<int>(-27, 4),
+                    new Interval<int>(-1, 26),
+                    new Interval<int>(10, 12),
+                    new Interval<int>(1, 22),
+                    new Interval<int>(-14, 14),
+                    new Interval<int>(-12, -5),
+                    new Interval<int>(-26, -18),
                 },
                 "[-27, 26]"
             },
-            new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(EndPoint<int>.Infinity, 5), new EndPointPair<int>(4, 8) }, "(-Inf, 8]" },
-            new object[] { new List<EndPointPair<int>>() { new EndPointPair<int>(2, 5), new EndPointPair<int>(4, new EndPoint<int>(8, false)) }, "[2, 8)" },
+            new object[] { new List<Interval<int>>() { new Interval<int>(EndPoint<int>.Infinity, 5), new Interval<int>(4, 8) }, "(-Inf, 8]" },
+            new object[] { new List<Interval<int>>() { new Interval<int>(2, 5), new Interval<int>(4, new EndPoint<int>(8, false)) }, "[2, 8)" },
         };
 
         [TestCaseSource(nameof(UnionIntervalStringsSource))]
-        public void ToString_ShouldReturnCorrectRepresentation(List<EndPointPair<int>> endPointPairs, string expected)
+        public void ToString_ShouldReturnCorrectRepresentation(List<Interval<int>> intervals, string expected)
         {
-            var interval = new Interval<int>(endPointPairs);
+            var interval = new UnionInterval<int>(intervals);
 
             Assert.That(interval.ToString(), Is.EqualTo(expected));
         }
 
         [TestCaseSource(nameof(UnionIntervalStringsSource))]
-        public void Union_ShouldCreateCorrectResult(List<EndPointPair<int>> endPointPairs, string expected)
+        public void Union_ShouldCreateCorrectResult(List<Interval<int>> intervals, string expected)
         {
-            var intervals = endPointPairs.Select(x => new Interval<int>(x.Lower, x.Upper)).ToList();
-
             var first = intervals.First();
             var result = first.Union(intervals.Skip(1));
 
@@ -129,11 +127,11 @@ namespace Wgaffa.Numbers.Tests
         [TestCaseSource(nameof(IntervalSetsSource))]
         public void Bounds_ShouldReturnCorrectCount(List<Interval<int>> intervals, int value, object[] expectedList)
         {
-            var interval = intervals.First().Union(intervals.Skip(1));
+            var interval = (UnionInterval<int>)intervals.First().Union(intervals.Skip(1));
 
             var expected = (int)expectedList[1];
 
-            Assert.That(interval.Bounds.Count, Is.EqualTo(expected));
+            Assert.That(interval.Intervals.Count, Is.EqualTo(expected));
         }
     }
 }

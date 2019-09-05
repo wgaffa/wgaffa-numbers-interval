@@ -13,10 +13,8 @@ namespace Wgaffa.Numbers.Tests
         {
             var interval = new Interval<int>(3, 24);
 
-            var result = interval.Bounds.Single();
-
-            Assert.That(result.Lower.Value, Is.EqualTo(3));
-            Assert.That(result.Upper.Value, Is.EqualTo(24));
+            Assert.That(interval.Lower.Value, Is.EqualTo(3));
+            Assert.That(interval.Upper.Value, Is.EqualTo(24));
         }
 
         [TestCase(1, 10, 5, ExpectedResult = true)]
@@ -144,7 +142,6 @@ namespace Wgaffa.Numbers.Tests
         public void IsEmpty_ShouldReturnTrue_GivenSpecialCases(Interval<int> interval)
         {
             Assert.That(interval.IsEmpty);
-            Assert.That(interval.Bounds.Count, Is.EqualTo(0));
         }
 
         static readonly List<Interval<int>> InfiniteIntervalSource = new List<Interval<int>> {
