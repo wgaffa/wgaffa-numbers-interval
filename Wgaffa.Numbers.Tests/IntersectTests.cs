@@ -23,5 +23,16 @@ namespace Wgaffa.Numbers.Tests
 
             Assert.That(interval, Is.EqualTo(expected));
         }
+
+        [Test]
+        public void Intersect_ShouldReturnEmptyInterval_GivenDisjointIntervals()
+        {
+            var first = new Interval<float>(1, 5);
+            var second = new Interval<float>(6, 8);
+
+            var result = first.Intersect(second);
+
+            Assert.That(result.IsEmpty);
+        }
     }
 }
