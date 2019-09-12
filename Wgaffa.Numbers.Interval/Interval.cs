@@ -17,6 +17,8 @@ namespace Wgaffa.Numbers
             }
         }
 
+        public bool Degenerate => Lower.Value.CompareTo(Upper.Value) == 0 && Lower.Inclusive && Upper.Inclusive && !IsEmpty;
+
         public EndPoint<T> Lower { get; }
         public EndPoint<T> Upper { get; }
 
