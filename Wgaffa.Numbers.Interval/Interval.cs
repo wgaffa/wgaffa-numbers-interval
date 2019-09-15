@@ -24,12 +24,15 @@ namespace Wgaffa.Numbers
 
         public Interval(EndPoint<T> lower, EndPoint<T> upper)
         {
-            Lower = lower.Lower ?? throw new ArgumentNullException(nameof(lower));
-            Upper = upper.Upper ?? throw new ArgumentNullException(nameof(upper));
+            Lower = lower?.Lower ?? throw new ArgumentNullException(nameof(lower));
+            Upper = upper?.Upper ?? throw new ArgumentNullException(nameof(upper));
         }
 
         public Interval(EndPointPair<T> endPoint)
         {
+            if (endPoint == null)
+                throw new ArgumentNullException(nameof(endPoint));
+
             Lower = endPoint.Lower;
             Upper = endPoint.Upper;
         }

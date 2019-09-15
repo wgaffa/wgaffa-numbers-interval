@@ -158,5 +158,19 @@ namespace Wgaffa.Numbers.Tests
         {
             Assert.That(interval.IsEmpty, Is.False);
         }
+
+        [Test]
+        public void Ctor_ShouldThrowNullException_GivenNullPair()
+        {
+            Assert.That(() => new Interval<int>(null), Throws.ArgumentNullException);
+        }
+
+        [TestCase(5, null)]
+        [TestCase(null, 5)]
+        [TestCase(null, null)]
+        public void Ctor_ShouldThrowNullException_GivenNullBounds(int? lower, int? upper)
+        {
+            Assert.That(() => new Interval<int>(lower, upper), Throws.ArgumentNullException);
+        }
     }
 }
