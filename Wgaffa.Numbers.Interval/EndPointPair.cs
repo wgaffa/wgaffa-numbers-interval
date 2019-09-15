@@ -2,7 +2,7 @@
 
 namespace Wgaffa.Numbers
 {
-    public class EndPointPair<T> : IEquatable<EndPointPair<T>> where T : IComparable<T>
+    internal class EndPointPair<T> : IEquatable<EndPointPair<T>> where T : IComparable<T>
     {
         private readonly EndPoint<T> _lower;
         private readonly EndPoint<T> _upper;

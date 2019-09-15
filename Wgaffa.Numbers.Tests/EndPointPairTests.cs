@@ -21,9 +21,11 @@ namespace Wgaffa.Numbers.Tests
         };
 
         [TestCaseSource(nameof(OverlapSource))]
-        public void Overlap_ShouldReturnCorrectResult(EndPointPair<int> first, EndPointPair<int> second, bool expected)
+        public void Overlap_ShouldReturnCorrectResult(object first, object second, bool expected)
         {
-            var result = first.Overlaps(second);
+            var leftPoint = (EndPointPair<int>)first;
+            var rightPoint = (EndPointPair<int>)second;
+            var result = leftPoint.Overlaps(rightPoint);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -41,9 +43,11 @@ namespace Wgaffa.Numbers.Tests
         };
 
         [TestCaseSource(nameof(MergeSource))]
-        public void Merge_ShouldReturnNewPair(EndPointPair<int> first, EndPointPair<int> second, EndPointPair<int> expected)
+        public void Merge_ShouldReturnNewPair(object first, object second, object expected)
         {
-            var result = first.Merge(second);
+            var leftPoint = (EndPointPair<int>)first;
+            var rightPoint = (EndPointPair<int>)second;
+            var result = leftPoint.Merge(rightPoint);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -55,6 +59,14 @@ namespace Wgaffa.Numbers.Tests
             var second = new EndPointPair<int>(new EndPoint<int>(5, false), 8);
 
             Assert.That(() => first.Merge(second), Throws.InvalidOperationException);
+        }
+
+        [TestCase(5, null)]
+        [TestCase(null, 5)]
+        [TestCase(null, null)]
+        public void Ctor_ShouldThrowNullException_GivenNullBounds(int? lower, int? upper)
+        {
+            Assert.That(() => new EndPointPair<int>(lower, upper), Throws.ArgumentNullException);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace Wgaffa.Numbers.Tests
@@ -105,6 +106,20 @@ namespace Wgaffa.Numbers.Tests
             var expected = equality == 0;
 
             Assert.That(first.Equals(second), Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Ctor_ShouldThrowNullException_GivenNullValue()
+        {
+            Assert.That(() => new EndPoint<MockClass>(null), Throws.ArgumentNullException);
+        }
+
+        class MockClass : IComparable<MockClass>
+        {
+            public int CompareTo(MockClass other)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

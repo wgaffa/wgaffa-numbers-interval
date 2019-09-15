@@ -18,6 +18,9 @@ namespace Wgaffa.Numbers
 
         public EndPoint(T value, bool inclusive = true)
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             Value = value;
             Inclusive = inclusive;
 

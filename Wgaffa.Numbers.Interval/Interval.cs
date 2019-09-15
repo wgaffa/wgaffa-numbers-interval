@@ -6,6 +6,8 @@ namespace Wgaffa.Numbers
 {
     public class Interval<T> : IInterval<T>, IEquatable<Interval<T>> where T : IComparable<T>
     {
+        private readonly EndPointPair<T> _endPoints;
+
         public bool IsEmpty
         {
             get
@@ -19,22 +21,17 @@ namespace Wgaffa.Numbers
 
         public bool Degenerate => Lower.Value.CompareTo(Upper.Value) == 0 && Lower.Inclusive && Upper.Inclusive && !IsEmpty;
 
-        public EndPoint<T> Lower { get; }
-        public EndPoint<T> Upper { get; }
+        public EndPoint<T> Lower => _endPoints.Lower;
+        public EndPoint<T> Upper => _endPoints.Upper;
 
         public Interval(EndPoint<T> lower, EndPoint<T> upper)
         {
-            Lower = lower?.Lower ?? throw new ArgumentNullException(nameof(lower));
-            Upper = upper?.Upper ?? throw new ArgumentNullException(nameof(upper));
+            _endPoints = new EndPointPair<T>(lower, upper);
         }
 
-        public Interval(EndPointPair<T> endPoint)
+        internal Interval(EndPointPair<T> endPointPair)
         {
-            if (endPoint == null)
-                throw new ArgumentNullException(nameof(endPoint));
-
-            Lower = endPoint.Lower;
-            Upper = endPoint.Upper;
+            _endPoints = endPointPair ?? throw new ArgumentNullException(nameof(endPointPair));
         }
 
         public virtual bool Contains(T value)
