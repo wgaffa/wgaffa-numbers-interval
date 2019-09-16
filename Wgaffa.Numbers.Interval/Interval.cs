@@ -4,10 +4,17 @@ using System.Linq;
 
 namespace Wgaffa.Numbers
 {
+    /// <summary>
+    /// Represents an interval between two <see cref="EndPoint{T}"/>s.
+    /// </summary>
+    /// <typeparam name="T">The type of the values.</typeparam>
     public class Interval<T> : IInterval<T>, IEquatable<Interval<T>> where T : IComparable<T>
     {
         private readonly EndPointPair<T> _endPoints;
 
+        /// <summary>
+        /// Gets wether the interval is considered empty.
+        /// </summary>
         public bool IsEmpty
         {
             get
@@ -19,11 +26,26 @@ namespace Wgaffa.Numbers
             }
         }
 
+        /// <summary>
+        /// Gets wether the interval holds a single value.
+        /// </summary>
         public bool Degenerate => Lower.Value.CompareTo(Upper.Value) == 0 && Lower.Inclusive && Upper.Inclusive && !IsEmpty;
 
+        /// <summary>
+        /// Gets the lower/left bound of the interval.
+        /// </summary>
         public EndPoint<T> Lower => _endPoints.Lower;
+
+        /// <summary>
+        /// Gets the upper/right bound of the interval.
+        /// </summary>
         public EndPoint<T> Upper => _endPoints.Upper;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Interval{T}"/> class.
+        /// </summary>
+        /// <param name="lower">The value of the lower/left boundary.</param>
+        /// <param name="upper">The value of the upper/right boundary.</param>
         public Interval(EndPoint<T> lower, EndPoint<T> upper)
         {
             _endPoints = new EndPointPair<T>(lower, upper);
@@ -39,6 +61,11 @@ namespace Wgaffa.Numbers
             return Lower.IsInsideLowerBounds(value) && Upper.IsInsideUpperBounds(value);
         }
 
+        /// <summary>
+        /// Intersect two intervals.
+        /// </summary>
+        /// <param name="other">The other interval to intersect with.</param>
+        /// <returns>A new interval based on the intersection of the two intervals.</returns>
         public Interval<T> Intersect(Interval<T> other)
         {
             EndPoint<T> max(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) > 0 ? x : y;
@@ -47,6 +74,11 @@ namespace Wgaffa.Numbers
             return new Interval<T>(max(Lower, other.Lower), min(Upper, other.Upper));
         }
 
+        /// <summary>
+        /// Union two intervals together.
+        /// </summary>
+        /// <param name="other">The other interval to union with.</param>
+        /// <returns>A new interval type that holds contains each interval.</returns>
         public IInterval<T> Union(IEnumerable<Interval<T>> other)
         {
             return new UnionInterval<T>(other.Prepend(this));

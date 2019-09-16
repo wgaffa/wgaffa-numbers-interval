@@ -4,12 +4,23 @@ using System.Linq;
 
 namespace Wgaffa.Numbers
 {
+    /// <summary>
+    /// Represents two or more <see cref="Interval{T}"/> unioned.
+    /// </summary>
+    /// <typeparam name="T">The type of values.</typeparam>
     public class UnionInterval<T> : IInterval<T> where T : IComparable<T>
     {
         private readonly List<Interval<T>> _intervals = new List<Interval<T>>();
 
+        /// <summary>
+        /// Gets the list of <see cref="Interval{T}"/>s.
+        /// </summary>
         public IReadOnlyCollection<Interval<T>> Intervals => _intervals.AsReadOnly();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnionInterval{T}"/> class.
+        /// </summary>
+        /// <param name="intervals">A list of <see cref="Interval{T}"/>.</param>
         public UnionInterval(IEnumerable<Interval<T>> intervals)
         {
             if (intervals == null)
