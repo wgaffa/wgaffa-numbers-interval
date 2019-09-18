@@ -10,8 +10,6 @@ namespace Wgaffa.Numbers
     /// <typeparam name="T">The type of the values.</typeparam>
     public class Interval<T> : IInterval<T>, IEquatable<Interval<T>> where T : IComparable<T>
     {
-        private readonly EndPointPair<T> _endPoints;
-
         /// <summary>
         /// Gets wether the interval is considered empty.
         /// </summary>
@@ -34,12 +32,12 @@ namespace Wgaffa.Numbers
         /// <summary>
         /// Gets the lower/left bound of the interval.
         /// </summary>
-        public EndPoint<T> Lower => _endPoints.Lower;
+        public EndPoint<T> Lower { get; }
 
         /// <summary>
         /// Gets the upper/right bound of the interval.
         /// </summary>
-        public EndPoint<T> Upper => _endPoints.Upper;
+        public EndPoint<T> Upper { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Interval{T}"/> class.
@@ -48,12 +46,14 @@ namespace Wgaffa.Numbers
         /// <param name="upper">The value of the upper/right boundary.</param>
         public Interval(EndPoint<T> lower, EndPoint<T> upper)
         {
-            _endPoints = new EndPointPair<T>(lower, upper);
-        }
+            if (lower == null)
+                throw new ArgumentNullException(nameof(lower));
 
-        internal Interval(EndPointPair<T> endPointPair)
-        {
-            _endPoints = endPointPair ?? throw new ArgumentNullException(nameof(endPointPair));
+            if (upper == null)
+                throw new ArgumentNullException(nameof(upper));
+
+            Lower = lower.Lower;
+            Upper = upper.Upper;
         }
 
         public virtual bool Contains(T value)
@@ -82,6 +82,31 @@ namespace Wgaffa.Numbers
         public IInterval<T> Union(IEnumerable<Interval<T>> other)
         {
             return new UnionInterval<T>(other.Prepend(this));
+        }
+
+        public bool Overlaps(Interval<T> other)
+        {
+            var continuousLeft = (Lower.Inclusive || other.Upper.Inclusive) && Lower.CompareTo(other.Upper) == 0;
+            var continuousRight = (other.Lower.Inclusive || Upper.Inclusive) && Upper.CompareTo(other.Lower) == 0;
+
+            if (continuousRight || continuousLeft)
+                return true;
+
+            return Lower.IsInsideLowerBounds(other.Upper) && other.Lower.IsInsideLowerBounds(Upper);
+        }
+
+        public Interval<T> Merge(Interval<T> other)
+        {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (!Overlaps(other))
+                throw new InvalidOperationException("Cannot perform a merge on non overlapping pairs");
+
+            EndPoint<T> max(EndPoint<T> left, EndPoint<T> right) => left.CompareTo(right) > 0 ? left : right;
+            EndPoint<T> min(EndPoint<T> left, EndPoint<T> right) => left.CompareTo(right) < 0 ? left : right;
+
+            return new Interval<T>(min(Lower, other.Lower), max(Upper, other.Upper));
         }
 
         public override string ToString()

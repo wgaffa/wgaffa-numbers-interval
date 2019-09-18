@@ -26,9 +26,9 @@ namespace Wgaffa.Numbers
             if (intervals == null)
                 throw new ArgumentNullException(nameof(intervals));
 
-            var endPoints = intervals.Select(x => new EndPointPair<T>(x.Lower, x.Upper));
+            var endPoints = intervals.Select(x => new Interval<T>(x.Lower, x.Upper));
             var nonEmptyPoints = endPoints.Where(x => x.Lower.IsInsideLowerBounds(x.Upper) && x.Upper.IsInsideUpperBounds(x.Lower));
-            var pointsBeingMerged = new List<EndPointPair<T>>(nonEmptyPoints);
+            var pointsBeingMerged = new List<Interval<T>>(nonEmptyPoints);
 
             while (pointsBeingMerged.Count > 0)
             {
@@ -45,7 +45,7 @@ namespace Wgaffa.Numbers
                     if (!mergeComplete)
                         mergedPoint = overlappingPoints.Aggregate(mergedPoint, (a, b) => a.Merge(b));
                     else
-                        _intervals.Add(new Interval<T>(mergedPoint));
+                        _intervals.Add(new Interval<T>(mergedPoint.Lower, mergedPoint.Upper));
 
                     var markedForDeletion = overlappingPoints.ToList();
                     foreach (var deleteItem in markedForDeletion)
