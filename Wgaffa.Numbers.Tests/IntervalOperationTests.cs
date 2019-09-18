@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Wgaffa.Numbers.Tests
 {
     [TestFixture]
-    public class EndPointPairTests
+    public class IntervalOperationTests
     {
         static readonly List<object[]> OverlapSource = new List<object[]> {
             new object[] { new Interval<int>(2, 5), new Interval<int>(3, 4), true},
