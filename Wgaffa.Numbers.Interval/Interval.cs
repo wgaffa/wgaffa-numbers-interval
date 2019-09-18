@@ -79,9 +79,51 @@ namespace Wgaffa.Numbers
         /// </summary>
         /// <param name="other">The other interval to union with.</param>
         /// <returns>A new interval type that holds contains each interval.</returns>
-        public IInterval<T> Union(IEnumerable<Interval<T>> other)
+        public IEnumerable<Interval<T>> Union(IEnumerable<Interval<T>> other)
         {
-            return new UnionInterval<T>(other.Prepend(this));
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            return Merge(other.Prepend(this));
+        }
+
+        private IEnumerable<Interval<T>> Merge(IEnumerable<Interval<T>> intervals)
+        {
+            if (intervals == null)
+                throw new ArgumentNullException(nameof(intervals));
+
+            var mergedIntervals = new List<Interval<T>>();
+
+            var endPoints = intervals.Select(x => new Interval<T>(x.Lower, x.Upper));
+            var nonEmptyPoints = endPoints.Where(x => x.Lower.IsInsideLowerBounds(x.Upper) && x.Upper.IsInsideUpperBounds(x.Lower));
+            var pointsBeingMerged = new List<Interval<T>>(nonEmptyPoints);
+
+            while (pointsBeingMerged.Count > 0)
+            {
+                var currentPoint = pointsBeingMerged[0];
+                pointsBeingMerged.RemoveAt(0);
+
+                var mergeComplete = false;
+                var mergedPoint = currentPoint;
+                while (!mergeComplete)
+                {
+                    var overlappingPoints = pointsBeingMerged.Where(x => x.Overlaps(mergedPoint));
+                    mergeComplete = overlappingPoints.Count() == 0;
+
+                    if (!mergeComplete)
+                        mergedPoint = overlappingPoints.Aggregate(mergedPoint, (a, b) => a.Merge(b));
+                    else
+                        mergedIntervals.Add(new Interval<T>(mergedPoint.Lower, mergedPoint.Upper));
+
+                    var markedForDeletion = overlappingPoints.ToList();
+                    foreach (var deleteItem in markedForDeletion)
+                    {
+                        pointsBeingMerged.Remove(deleteItem);
+                    }
+                }
+            }
+
+            return mergedIntervals;
         }
 
         public bool Overlaps(Interval<T> other)

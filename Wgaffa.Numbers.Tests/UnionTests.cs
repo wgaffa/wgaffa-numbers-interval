@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using Wgaffa.Numbers.Linq;
 
 namespace Wgaffa.Numbers.Tests
 {
@@ -28,9 +29,7 @@ namespace Wgaffa.Numbers.Tests
                 new Interval<int>(lowerSecond, upperSecond)
             };
 
-            var interval = new UnionInterval<int>(pairs);
-
-            Assert.That(interval.Contains(value), Is.EqualTo(expected));
+            Assert.That(pairs.Contains(value), Is.EqualTo(expected));
         }
 
         static readonly List<object[]> UnionIntervalStringsSource = new List<object[]> {
@@ -57,18 +56,11 @@ namespace Wgaffa.Numbers.Tests
         [TestCaseSource(nameof(UnionIntervalStringsSource))]
         public void ToString_ShouldReturnCorrectRepresentation(List<Interval<int>> intervals, string expected)
         {
-            var interval = new UnionInterval<int>(intervals);
+            var interval = intervals[0].Union(intervals.Skip(1));
 
-            Assert.That(interval.ToString(), Is.EqualTo(expected));
-        }
+            var result = string.Join(", ", interval);
 
-        [TestCaseSource(nameof(UnionIntervalStringsSource))]
-        public void Union_ShouldCreateCorrectResult(List<Interval<int>> intervals, string expected)
-        {
-            var first = intervals.First();
-            var result = first.Union(intervals.Skip(1));
-
-            Assert.That(result.ToString(), Is.EqualTo(expected));
+            Assert.That(result, Is.EqualTo(expected));
         }
 
         static readonly List<object[]> IntervalSetsSource = new List<object[]> {
@@ -127,11 +119,11 @@ namespace Wgaffa.Numbers.Tests
         [TestCaseSource(nameof(IntervalSetsSource))]
         public void Bounds_ShouldReturnCorrectCount(List<Interval<int>> intervals, int value, object[] expectedList)
         {
-            var interval = (UnionInterval<int>)intervals.First().Union(intervals.Skip(1));
+            var interval = intervals.First().Union(intervals.Skip(1));
 
             var expected = (int)expectedList[1];
 
-            Assert.That(interval.Intervals.Count, Is.EqualTo(expected));
+            Assert.That(interval.Count, Is.EqualTo(expected));
         }
     }
 }
