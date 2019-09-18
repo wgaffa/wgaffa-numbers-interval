@@ -8,7 +8,7 @@ namespace Wgaffa.Numbers
     /// Represents an interval between two <see cref="EndPoint{T}"/>s.
     /// </summary>
     /// <typeparam name="T">The type of the values.</typeparam>
-    public class Interval<T> : IInterval<T>, IEquatable<Interval<T>> where T : IComparable<T>
+    public class Interval<T> : IEquatable<Interval<T>> where T : IComparable<T>
     {
         /// <summary>
         /// Gets wether the interval is considered empty.
