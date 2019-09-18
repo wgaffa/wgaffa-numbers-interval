@@ -90,6 +90,28 @@ namespace Wgaffa.Numbers
             return Value.CompareTo(other.Value);
         }
 
+        #region Overloaded operations
+        public static bool operator <(EndPoint<T> left, EndPoint<T> right) => EndPoint<T>.CompareTo(left, right) < 0;
+        public static bool operator >(EndPoint<T> left, EndPoint<T> right) => EndPoint<T>.CompareTo(left, right) > 0;
+        public static bool operator <=(EndPoint<T> left, EndPoint<T> right) => EndPoint<T>.CompareTo(left, right) <= 0;
+        public static bool operator >=(EndPoint<T> left, EndPoint<T> right) => EndPoint<T>.CompareTo(left, right) >= 0;
+        public static bool operator ==(EndPoint<T> left, EndPoint<T> right) => object.Equals(left, right);
+        public static bool operator !=(EndPoint<T> left, EndPoint<T> right) => !object.Equals(left, right);
+        private static int CompareTo(EndPoint<T> left, EndPoint<T> right)
+        {
+            if (ReferenceEquals(left, right))
+                return 0;
+
+            if (left is null)
+                return -1;
+
+            if (right is null)
+                return 1;
+
+            return left.CompareTo(right);
+        }
+        #endregion
+
         public override string ToString()
         {
             return Value.ToString();

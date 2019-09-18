@@ -151,6 +151,11 @@ namespace Wgaffa.Numbers
             return new Interval<T>(min(Lower, other.Lower), max(Upper, other.Upper));
         }
 
+        #region Overloaded operators
+        public static bool operator ==(Interval<T> left, Interval<T> right) => object.Equals(left, right);
+        public static bool operator !=(Interval<T> left, Interval<T> right) => !object.Equals(left, right);
+        #endregion
+
         public override string ToString()
         {
             return $"{(Lower.Inclusive ? '[' : '(')}{Lower}, {Upper}{(Upper.Inclusive ? ']' : ')')}";
