@@ -121,5 +121,21 @@ namespace Wgaffa.Numbers.Tests
                 throw new NotImplementedException();
             }
         }
+
+        [Test]
+        public void Closed_ShouldReturnInclusive()
+        {
+            var closedPoint = EndPoint<float>.Closed(5f);
+
+            Assert.That(closedPoint.Inclusive);
+        }
+
+        [Test]
+        public void Open_ShouldReturnNonInclusive()
+        {
+            var openPoint = EndPoint<float>.Open(5f);
+
+            Assert.That(openPoint.Inclusive, Is.False);
+        }
     }
 }

@@ -112,6 +112,22 @@ namespace Wgaffa.Numbers
         }
         #endregion
 
+        #region Factory Methods
+        /// <summary>
+        /// Create a closed (inclusive) <see cref="EndPoint{T}" /> of type T.
+        /// </summary>
+        /// <param name="value">The value to use for the closed bound.</param>
+        /// <returns>Returns a new closed <see cref="EndPoint{T}" /> with the new value.</returns>
+        public static EndPoint<T> Closed(T value) => new EndPoint<T>(value);
+
+        /// <summary>
+        /// Create an open (non inclusive) <see cref="EndPoint{T}" /> of type T.
+        /// </summary>
+        /// <param name="value">The value to use for the open bound.</param>
+        /// <returns>Returns a new open <see cref="EndPoint{T}" /> with the new value.</returns>
+        public static EndPoint<T> Open(T value) => new EndPoint<T>(value, false);
+        #endregion
+
         public override string ToString()
         {
             return Value.ToString();
