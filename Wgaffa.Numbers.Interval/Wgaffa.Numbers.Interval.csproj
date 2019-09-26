@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Wgaffa.Numbers</RootNamespace>
+    <Authors>wgaffa</Authors>
+    <Company>Wgaffa</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>numeric math</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>A generic class to represent intervals between two objects.</Description>
+    <Copyright></Copyright>
+    <PackageProjectUrl>https://github.com/wgaffa/wgaffa-numbers-interval</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Wgaffa.Numbers.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>
