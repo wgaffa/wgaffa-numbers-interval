@@ -27,7 +27,7 @@ namespace Wgaffa.Numbers
         /// <summary>
         /// Gets wether the interval holds a single value.
         /// </summary>
-        public bool Degenerate => Lower.Value.CompareTo(Upper.Value) == 0 && Lower.Inclusive && Upper.Inclusive && !IsEmpty;
+        public bool IsDegenerate => Lower.Value.CompareTo(Upper.Value) == 0 && Lower.Inclusive && Upper.Inclusive && !IsEmpty;
 
         /// <summary>
         /// Gets the lower/left bound of the interval.
