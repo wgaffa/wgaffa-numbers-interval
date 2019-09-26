@@ -6,8 +6,11 @@
     <Authors>wgaffa</Authors>
     <Company>Wgaffa</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags />
+    <PackageTags>numeric math</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>A generic class to represent intervals between two objects.</Description>
+    <Copyright></Copyright>
+    <PackageProjectUrl>https://github.com/wgaffa/wgaffa-numbers-interval</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
