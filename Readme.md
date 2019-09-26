@@ -45,4 +45,24 @@ If lower and upper bounds are equal but one of them is open
 var emptyInterval = new Interval<float>(new EndPoint<float>(2.5f, false), 2.5f); // (2.5f, 2.5]
 ```
 ### Intersect Intervals
+Intersecting two intervals is easy
+
+```csharp
+var first = new Interval<float>(5f, 10f); // [5, 10]
+var second = new Interval<float>(7f, 15f); // [7, 15]
+var intersected = first.Intersect(second); // [7, 10]
+```
 ### Union Intervals
+You can merge several intervals together and get a collection of `Interval`s.
+
+```csharp
+var intervals = new List<Interval<float>>() {
+	new Interval<float>(5f, 10f),
+	new Interval<float>(17f, 17f),
+	new Interval<float>(7f, 20f),
+	new Interval<float>(-5f, 2f)
+};
+
+var first = new Interval<float>(7f, 8f);
+var unionIntervals = first.Union(intervals); // [-5, 2] U [5, 20]
+```
