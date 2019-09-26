@@ -1,4 +1,4 @@
-![GitHub](https://img.shields.io/github/license/wgaffa/wgaffa-numbers-interval)
+![GitHub](https://img.shields.io/github/license/wgaffa/wgaffa-numbers-interval) ![Nuget](https://img.shields.io/nuget/v/Wgaffa.Numbers.Interval)
 
 # Interval
 Interval is a generic library to represent an interval between two objects with support for infinity.
