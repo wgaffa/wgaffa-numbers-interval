@@ -166,5 +166,13 @@ namespace Wgaffa.Numbers.Tests
         {
             Assert.That(() => new Interval<int>(lower, upper), Throws.ArgumentNullException);
         }
+
+        [Test]
+        public void ToString_ShouldReturnEmptySymbolString_GivenEmptyInterval()
+        {
+            var emptyInterval = new Interval<float>(5f, -5f);
+
+            Assert.That(emptyInterval.ToString(), Is.EqualTo("\u2205"));
+        }
     }
 }

@@ -158,6 +158,9 @@ namespace Wgaffa.Numbers
 
         public override string ToString()
         {
+            if (IsEmpty)
+                return "\u2205";
+
             return $"{(Lower.Inclusive ? '[' : '(')}{Lower}, {Upper}{(Upper.Inclusive ? ']' : ')')}";
         }
 
