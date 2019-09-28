@@ -6,6 +6,7 @@ namespace Wgaffa.Numbers
     /// Represents a value of type <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
+    [Serializable]
     public class EndPoint<T> : IComparable<T>, IComparable<EndPoint<T>>, IEquatable<EndPoint<T>> where T : IComparable<T>
     {
         /// <summary>
