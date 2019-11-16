@@ -12,12 +12,12 @@ namespace Wgaffa.Numbers
         /// <summary>
         /// The positive infinity value of the chosen type.
         /// </summary>
-        public static EndPoint<T> PositiveInfinity = new EndPointPositiveInfinity();
+        public static readonly EndPoint<T> PositiveInfinity = new EndPointPositiveInfinity();
 
         /// <summary>
         /// The Negative infinity value of the chosen type.
         /// </summary>
-        public static EndPoint<T> NegativeInfinity = new EndPointPositiveInfinity(-1);
+        public static readonly EndPoint<T> NegativeInfinity = new EndPointPositiveInfinity(-1);
 
         /// <summary>
         /// The infinity value of the chosen type.
@@ -25,7 +25,7 @@ namespace Wgaffa.Numbers
         /// <remarks>
         /// This is either <see cref="PositiveInfinity" /> or <see cref="NegativeInfinity"/> based on context.
         /// </remarks>
-        public static EndPoint<T> Infinity = new EndPointInfinity();
+        public static readonly EndPoint<T> Infinity = new EndPointInfinity();
 
         internal virtual EndPoint<T> Lower => this;
         internal virtual EndPoint<T> Upper => this;
@@ -68,12 +68,20 @@ namespace Wgaffa.Numbers
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "<Pending>")]
         public static implicit operator EndPoint<T>(T value)
         {
             return new EndPoint<T>(value);
         }
 
-        public static implicit operator T(EndPoint<T> other) => other.Value;
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "<Pending>")]
+        public static implicit operator T(EndPoint<T> other)
+        {
+            if (other == null)
+                return default;
+
+            return other.Value;
+        }
 
         public virtual int CompareTo(T other)
         {
