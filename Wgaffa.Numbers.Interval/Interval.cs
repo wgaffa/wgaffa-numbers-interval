@@ -96,37 +96,33 @@ namespace Wgaffa.Numbers
             if (intervals == null)
                 throw new ArgumentNullException(nameof(intervals));
 
-            var mergedIntervals = new List<Interval<T>>();
+            var nonEmptyIntervals = intervals.Where(i => !i.IsEmpty);
 
-            var nonEmptyPoints = intervals.Where(x => x.Lower.IsBefore(x.Upper) && x.Upper.IsAfter(x.Lower));
-            var pointsBeingMerged = new List<Interval<T>>(nonEmptyPoints);
+            if (!nonEmptyIntervals.Any())
+                return Array.Empty<Interval<T>>();
 
-            while (pointsBeingMerged.Count > 0)
+            var sortedIntervals = nonEmptyIntervals.OrderBy(i => i.Lower).ToList();
+            var intervalStack = new Stack<Interval<T>>();
+            
+            intervalStack.Push(sortedIntervals[0]);
+
+            for (int i = 1; i < sortedIntervals.Count; i++)
             {
-                var currentPoint = pointsBeingMerged[0];
-                pointsBeingMerged.RemoveAt(0);
+                var top = intervalStack.Peek();
 
-                var mergeComplete = false;
-                var mergedPoint = currentPoint;
-                while (!mergeComplete)
+                if (!top.Overlaps(sortedIntervals[i]))
                 {
-                    var overlappingPoints = pointsBeingMerged.Where(x => x.Overlaps(mergedPoint)).ToList();
-                    mergeComplete = !overlappingPoints.Any();
-
-                    if (!mergeComplete)
-                        mergedPoint = overlappingPoints.Aggregate(mergedPoint, (a, b) => a.Merge(b));
-                    else
-                        mergedIntervals.Add(currentPoint.Create(mergedPoint.Lower, mergedPoint.Upper));
-
-                    var markedForDeletion = overlappingPoints.ToList();
-                    foreach (var deleteItem in markedForDeletion)
-                    {
-                        pointsBeingMerged.Remove(deleteItem);
-                    }
+                    intervalStack.Push(sortedIntervals[i]);
+                }
+                else if (top.Upper < sortedIntervals[i].Upper)
+                {
+                    var newInterval = top.Create(top.Lower, sortedIntervals[i].Upper);
+                    intervalStack.Pop();
+                    intervalStack.Push(newInterval);
                 }
             }
 
-            return mergedIntervals;
+            return intervalStack.Reverse();
         }
 
         protected virtual Interval<T> Create(EndPoint<T> lower, EndPoint<T> upper)
