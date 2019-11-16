@@ -26,7 +26,7 @@ namespace Wgaffa.Numbers
             if (continuousLeft || continuousRight)
                 return true;
 
-            return Lower.IsInsideLowerBounds(other.Upper) && other.Lower.IsInsideLowerBounds(Upper);
+            return Lower.IsBefore(other.Upper) && other.Lower.IsBefore(Upper);
         }
     }
 }

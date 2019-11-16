@@ -21,7 +21,7 @@ namespace Wgaffa.Numbers
                 if (Lower.CompareTo(Upper) == 0)
                     return !(Lower.Inclusive && Upper.Inclusive);
 
-                return Lower.IsInsideUpperBounds(Upper) || Upper.IsInsideLowerBounds(Lower);
+                return Lower.IsAfter(Upper) || Upper.IsBefore(Lower);
             }
         }
 
@@ -59,7 +59,7 @@ namespace Wgaffa.Numbers
 
         public virtual bool Contains(T value)
         {
-            return Lower.IsInsideLowerBounds(value) && Upper.IsInsideUpperBounds(value);
+            return Lower.IsBefore(value) && Upper.IsAfter(value);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Wgaffa.Numbers
             var mergedIntervals = new List<Interval<T>>();
 
             var endPoints = intervals.Select(x => new Interval<T>(x.Lower, x.Upper));
-            var nonEmptyPoints = endPoints.Where(x => x.Lower.IsInsideLowerBounds(x.Upper) && x.Upper.IsInsideUpperBounds(x.Lower));
+            var nonEmptyPoints = endPoints.Where(x => x.Lower.IsBefore(x.Upper) && x.Upper.IsAfter(x.Lower));
             var pointsBeingMerged = new List<Interval<T>>(nonEmptyPoints);
 
             while (pointsBeingMerged.Count > 0)
@@ -138,7 +138,7 @@ namespace Wgaffa.Numbers
             if (continuousRight || continuousLeft)
                 return true;
 
-            return Lower.IsInsideLowerBounds(other.Upper) && other.Lower.IsInsideLowerBounds(Upper);
+            return Lower.IsBefore(other.Upper) && other.Lower.IsBefore(Upper);
         }
 
         public Interval<T> Merge(Interval<T> other)
