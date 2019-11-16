@@ -69,10 +69,13 @@ namespace Wgaffa.Numbers
         /// <returns>A new interval based on the intersection of the two intervals.</returns>
         public Interval<T> Intersect(Interval<T> other)
         {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
             EndPoint<T> max(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) > 0 ? x : y;
             EndPoint<T> min(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) < 0 ? x : y;
 
-            return new Interval<T>(max(Lower, other.Lower), min(Upper, other.Upper));
+            return Create(max(Lower, other.Lower), min(Upper, other.Upper));
         }
 
         /// <summary>
@@ -95,8 +98,7 @@ namespace Wgaffa.Numbers
 
             var mergedIntervals = new List<Interval<T>>();
 
-            var endPoints = intervals.Select(x => new Interval<T>(x.Lower, x.Upper));
-            var nonEmptyPoints = endPoints.Where(x => x.Lower.IsBefore(x.Upper) && x.Upper.IsAfter(x.Lower));
+            var nonEmptyPoints = intervals.Where(x => x.Lower.IsBefore(x.Upper) && x.Upper.IsAfter(x.Lower));
             var pointsBeingMerged = new List<Interval<T>>(nonEmptyPoints);
 
             while (pointsBeingMerged.Count > 0)
@@ -108,13 +110,13 @@ namespace Wgaffa.Numbers
                 var mergedPoint = currentPoint;
                 while (!mergeComplete)
                 {
-                    var overlappingPoints = pointsBeingMerged.Where(x => x.Overlaps(mergedPoint));
-                    mergeComplete = overlappingPoints.Count() == 0;
+                    var overlappingPoints = pointsBeingMerged.Where(x => x.Overlaps(mergedPoint)).ToList();
+                    mergeComplete = !overlappingPoints.Any();
 
                     if (!mergeComplete)
                         mergedPoint = overlappingPoints.Aggregate(mergedPoint, (a, b) => a.Merge(b));
                     else
-                        mergedIntervals.Add(new Interval<T>(mergedPoint.Lower, mergedPoint.Upper));
+                        mergedIntervals.Add(currentPoint.Create(mergedPoint.Lower, mergedPoint.Upper));
 
                     var markedForDeletion = overlappingPoints.ToList();
                     foreach (var deleteItem in markedForDeletion)
@@ -125,6 +127,11 @@ namespace Wgaffa.Numbers
             }
 
             return mergedIntervals;
+        }
+
+        protected virtual Interval<T> Create(EndPoint<T> lower, EndPoint<T> upper)
+        {
+            return new Interval<T>(lower, upper);
         }
 
         public virtual bool Overlaps(Interval<T> other)
@@ -141,7 +148,7 @@ namespace Wgaffa.Numbers
             return Lower.IsBefore(other.Upper) && other.Lower.IsBefore(Upper);
         }
 
-        public Interval<T> Merge(Interval<T> other)
+        public virtual Interval<T> Merge(Interval<T> other)
         {
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
@@ -152,7 +159,7 @@ namespace Wgaffa.Numbers
             EndPoint<T> max(EndPoint<T> left, EndPoint<T> right) => left.CompareTo(right) > 0 ? left : right;
             EndPoint<T> min(EndPoint<T> left, EndPoint<T> right) => left.CompareTo(right) < 0 ? left : right;
 
-            return new Interval<T>(min(Lower, other.Lower), max(Upper, other.Upper));
+            return Create(min(Lower, other.Lower), max(Upper, other.Upper));
         }
 
         #region Overloaded operators

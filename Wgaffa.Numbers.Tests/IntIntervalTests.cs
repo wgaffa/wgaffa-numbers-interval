@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Wgaffa.Numbers.Tests
 {
@@ -52,6 +53,28 @@ namespace Wgaffa.Numbers.Tests
             var expected = new IntInterval(3, 15);
 
             Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Union_ShouldUnion_GivenMultipleIntInterval()
+        {
+            var intervals = new List<IntInterval>()
+            {
+                new IntInterval(3, 7),
+                new IntInterval(8, 10),
+                new IntInterval(11, 15)
+            };
+
+            var startInterval = new IntInterval(1, 3);
+
+            var result = startInterval.Union(intervals);
+
+            var expected = new List<IntInterval>()
+            {
+                new IntInterval(1, 15)
+            };
+
+            Assert.That(result, Is.EquivalentTo(expected));
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Wgaffa.Numbers
 {
@@ -8,11 +10,15 @@ namespace Wgaffa.Numbers
         {
         }
 
-        public IntInterval Merge(IntInterval other)
+        public IEnumerable<IntInterval> Union(IEnumerable<IntInterval> intervals)
         {
-            var merged = Merge((Interval<int>)other);
+            if (intervals == null)
+                throw new ArgumentNullException(nameof(intervals));
 
-            return new IntInterval(merged.Lower, merged.Upper);
+            var baseCollection = base.Union(intervals);
+            var casted = baseCollection.Cast<IntInterval>();
+
+            return casted;
         }
 
         public override bool Overlaps(Interval<int> other)
@@ -27,6 +33,11 @@ namespace Wgaffa.Numbers
                 return true;
 
             return Lower.IsBefore(other.Upper) && other.Lower.IsBefore(Upper);
+        }
+
+        protected override Interval<int> Create(EndPoint<int> lower, EndPoint<int> upper)
+        {
+            return new IntInterval(lower, upper);
         }
     }
 }

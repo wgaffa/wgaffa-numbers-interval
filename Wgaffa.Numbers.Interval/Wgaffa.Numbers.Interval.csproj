@@ -11,7 +11,8 @@
     <Description>A generic class to represent intervals between two objects.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/wgaffa/wgaffa-numbers-interval</PackageProjectUrl>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
+    <PackageReleaseNotes />
   </PropertyGroup>
 
   <ItemGroup>
