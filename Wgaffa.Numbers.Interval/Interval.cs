@@ -21,7 +21,7 @@ namespace Wgaffa.Numbers
                 if (Lower.CompareTo(Upper) == 0)
                     return !(Lower.Inclusive && Upper.Inclusive);
 
-                return Lower.IsInsideUpperBounds(Upper) || Upper.IsInsideLowerBounds(Lower);
+                return Lower.IsAfter(Upper) || Upper.IsBefore(Lower);
             }
         }
 
@@ -59,7 +59,7 @@ namespace Wgaffa.Numbers
 
         public virtual bool Contains(T value)
         {
-            return Lower.IsInsideLowerBounds(value) && Upper.IsInsideUpperBounds(value);
+            return Lower.IsBefore(value) && Upper.IsAfter(value);
         }
 
         /// <summary>
@@ -69,10 +69,13 @@ namespace Wgaffa.Numbers
         /// <returns>A new interval based on the intersection of the two intervals.</returns>
         public Interval<T> Intersect(Interval<T> other)
         {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
             EndPoint<T> max(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) > 0 ? x : y;
             EndPoint<T> min(EndPoint<T> x, EndPoint<T> y) => x.CompareTo(y) < 0 ? x : y;
 
-            return new Interval<T>(max(Lower, other.Lower), min(Upper, other.Upper));
+            return Create(max(Lower, other.Lower), min(Upper, other.Upper));
         }
 
         /// <summary>
@@ -93,71 +96,55 @@ namespace Wgaffa.Numbers
             if (intervals == null)
                 throw new ArgumentNullException(nameof(intervals));
 
-            var mergedIntervals = new List<Interval<T>>();
+            var nonEmptyIntervals = intervals.Where(i => !i.IsEmpty);
 
-            var endPoints = intervals.Select(x => new Interval<T>(x.Lower, x.Upper));
-            var nonEmptyPoints = endPoints.Where(x => x.Lower.IsInsideLowerBounds(x.Upper) && x.Upper.IsInsideUpperBounds(x.Lower));
-            var pointsBeingMerged = new List<Interval<T>>(nonEmptyPoints);
+            if (!nonEmptyIntervals.Any())
+                return Array.Empty<Interval<T>>();
 
-            while (pointsBeingMerged.Count > 0)
+            var sortedIntervals = nonEmptyIntervals.OrderBy(i => i.Lower).ToList();
+            var intervalStack = new Stack<Interval<T>>();
+            
+            intervalStack.Push(sortedIntervals[0]);
+
+            for (int i = 1; i < sortedIntervals.Count; i++)
             {
-                var currentPoint = pointsBeingMerged[0];
-                pointsBeingMerged.RemoveAt(0);
+                var top = intervalStack.Peek();
 
-                var mergeComplete = false;
-                var mergedPoint = currentPoint;
-                while (!mergeComplete)
+                if (!top.Overlaps(sortedIntervals[i]))
                 {
-                    var overlappingPoints = pointsBeingMerged.Where(x => x.Overlaps(mergedPoint));
-                    mergeComplete = overlappingPoints.Count() == 0;
-
-                    if (!mergeComplete)
-                        mergedPoint = overlappingPoints.Aggregate(mergedPoint, (a, b) => a.Merge(b));
-                    else
-                        mergedIntervals.Add(new Interval<T>(mergedPoint.Lower, mergedPoint.Upper));
-
-                    var markedForDeletion = overlappingPoints.ToList();
-                    foreach (var deleteItem in markedForDeletion)
-                    {
-                        pointsBeingMerged.Remove(deleteItem);
-                    }
+                    intervalStack.Push(sortedIntervals[i]);
+                }
+                else if (top.Upper < sortedIntervals[i].Upper)
+                {
+                    var newInterval = top.Create(top.Lower, sortedIntervals[i].Upper);
+                    intervalStack.Pop();
+                    intervalStack.Push(newInterval);
                 }
             }
 
-            return mergedIntervals;
+            return intervalStack.Reverse();
         }
 
-        public bool Overlaps(Interval<T> other)
+        protected virtual Interval<T> Create(EndPoint<T> lower, EndPoint<T> upper)
+        {
+            return new Interval<T>(lower, upper);
+        }
+
+        public virtual bool Overlaps(Interval<T> other)
         {
             if (other == null)
                 return false;
 
-            var continuousLeft = IsContinuousLeft(other);
-            var continuousRight = IsContinousRight(other);
+            var continuousLeft = (Lower.Inclusive || other.Upper.Inclusive) && Lower.CompareTo(other.Upper) == 0;
+            var continuousRight = (other.Lower.Inclusive || Upper.Inclusive) && Upper.CompareTo(other.Lower) == 0;
 
             if (continuousRight || continuousLeft)
                 return true;
 
-            return Lower.IsInsideLowerBounds(other.Upper) && other.Lower.IsInsideLowerBounds(Upper);
+            return Lower.IsBefore(other.Upper) && other.Lower.IsBefore(Upper);
         }
 
-        protected virtual bool IsContinousRight(Interval<T> other)
-        {
-            if (other == null)
-                return false;
-
-            return (other.Lower.Inclusive || Upper.Inclusive) && Upper.CompareTo(other.Lower) == 0;
-        }
-
-        protected virtual bool IsContinuousLeft(Interval<T> other)
-        {
-            if (other == null)
-                return false;
-
-            return (Lower.Inclusive || other.Upper.Inclusive) && Lower.CompareTo(other.Upper) == 0;
-        }
-
-        public Interval<T> Merge(Interval<T> other)
+        public virtual Interval<T> Merge(Interval<T> other)
         {
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
@@ -168,7 +155,7 @@ namespace Wgaffa.Numbers
             EndPoint<T> max(EndPoint<T> left, EndPoint<T> right) => left.CompareTo(right) > 0 ? left : right;
             EndPoint<T> min(EndPoint<T> left, EndPoint<T> right) => left.CompareTo(right) < 0 ? left : right;
 
-            return new Interval<T>(min(Lower, other.Lower), max(Upper, other.Upper));
+            return Create(min(Lower, other.Lower), max(Upper, other.Upper));
         }
 
         #region Overloaded operators
