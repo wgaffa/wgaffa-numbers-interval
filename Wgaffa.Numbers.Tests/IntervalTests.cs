@@ -174,5 +174,15 @@ namespace Wgaffa.Numbers.Tests
 
             Assert.That(emptyInterval.ToString(), Is.EqualTo("\u2205"));
         }
+
+        [Test]
+        public void Overlap_ShouldReturnFalse_GivenNull()
+        {
+            var interval = new Interval<float>(3.2f, 5);
+
+            var result = interval.Overlaps(null);
+
+            Assert.That(result, Is.False);
+        }
     }
 }

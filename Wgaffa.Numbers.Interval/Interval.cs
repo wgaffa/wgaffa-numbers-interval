@@ -129,13 +129,32 @@ namespace Wgaffa.Numbers
 
         public bool Overlaps(Interval<T> other)
         {
-            var continuousLeft = (Lower.Inclusive || other.Upper.Inclusive) && Lower.CompareTo(other.Upper) == 0;
-            var continuousRight = (other.Lower.Inclusive || Upper.Inclusive) && Upper.CompareTo(other.Lower) == 0;
+            if (other == null)
+                return false;
+
+            var continuousLeft = IsContinuousLeft(other);
+            var continuousRight = IsContinousRight(other);
 
             if (continuousRight || continuousLeft)
                 return true;
 
             return Lower.IsInsideLowerBounds(other.Upper) && other.Lower.IsInsideLowerBounds(Upper);
+        }
+
+        protected virtual bool IsContinousRight(Interval<T> other)
+        {
+            if (other == null)
+                return false;
+
+            return (other.Lower.Inclusive || Upper.Inclusive) && Upper.CompareTo(other.Lower) == 0;
+        }
+
+        protected virtual bool IsContinuousLeft(Interval<T> other)
+        {
+            if (other == null)
+                return false;
+
+            return (Lower.Inclusive || other.Upper.Inclusive) && Lower.CompareTo(other.Upper) == 0;
         }
 
         public Interval<T> Merge(Interval<T> other)
